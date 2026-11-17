@@ -1,0 +1,182 @@
+<Window x:Class="RustMidiManager.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Title="Rust MIDI Manager" Width="1200" Height="792" MinWidth="940" MinHeight="680"
+ Background="{DynamicResource CanvasBrush}" Foreground="{DynamicResource Ink}" FontFamily="Segoe UI Variable Text, Segoe UI" FontSize="14"
+ AllowDrop="True" Drop="OnDrop" StateChanged="WindowStateChanged" Closing="WindowClosing">
+
+ <Grid>
+  <Grid.ColumnDefinitions><ColumnDefinition Width="212"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+  <Border Background="{DynamicResource Rail}" Padding="15,24" BorderBrush="{DynamicResource Line}" BorderThickness="0,0,1,0">
+   <DockPanel>
+    <StackPanel DockPanel.Dock="Top">
+     <StackPanel Orientation="Horizontal" Margin="7,0,0,30">
+      <Border Width="36" Height="36" Background="{DynamicResource Accent}" CornerRadius="12"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEC4F;" FontSize="19" Foreground="{DynamicResource AccentInk}" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+      <TextBlock Text="Rust MIDI" FontSize="22" FontWeight="SemiBold" VerticalAlignment="Center" Margin="10,0,0,0"/>
+     </StackPanel>
+     <Button x:Name="OverviewNav" Style="{StaticResource Nav}" Tag="Overview" Click="Navigate"><StackPanel Orientation="Horizontal"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE80F;" VerticalAlignment="Center" Margin="0,0,12,0"/><TextBlock Text="Обзор"/></StackPanel></Button>
+     <Button x:Name="LibraryNav" Style="{StaticResource Nav}" Tag="Library" Click="Navigate"><StackPanel Orientation="Horizontal"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE8F1;" VerticalAlignment="Center" Margin="0,0,12,0"/><TextBlock Text="Медиатека"/></StackPanel></Button>
+     <Button x:Name="ListsNav" Style="{StaticResource Nav}" Tag="Lists" Click="Navigate"><StackPanel Orientation="Horizontal"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE142;" VerticalAlignment="Center" Margin="0,0,12,0"/><TextBlock Text="Плейлисты"/></StackPanel></Button>
+     <Button x:Name="FavoritesNav" Style="{StaticResource Nav}" Tag="Favorites" Click="Navigate"><StackPanel Orientation="Horizontal"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEB52;" VerticalAlignment="Center" Margin="0,0,12,0"/><TextBlock Text="Избранное"/></StackPanel></Button>
+     <Button x:Name="BindingsNav" Style="{StaticResource Nav}" Tag="Bindings" Click="Navigate"><StackPanel Orientation="Horizontal"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE765;" VerticalAlignment="Center" Margin="0,0,12,0"/><TextBlock Text="Горячие клавиши"/></StackPanel></Button>
+     <Button x:Name="SettingsNav" Style="{StaticResource Nav}" Tag="Settings" Click="Navigate"><StackPanel Orientation="Horizontal"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" VerticalAlignment="Center" Margin="0,0,12,0"/><TextBlock Text="Настройки"/></StackPanel></Button>
+    </StackPanel>
+    <StackPanel DockPanel.Dock="Bottom"><Button x:Name="ThemeToggle" HorizontalContentAlignment="Left" Click="ToggleTheme" Margin="0,0,0,22" Padding="13,9" AutomationProperties.Name="Переключить тему"/>
+     <TextBlock Foreground="{DynamicResource Accent}" FontSize="11" Text="Установка Rust" FontWeight="SemiBold"/>
+     <TextBlock x:Name="RustStatus" Margin="0,6,0,9"/>
+     <Button Content="Мастер настройки" Style="{StaticResource Nav}" Click="Setup"/>
+    </StackPanel>
+    <Border/>
+   </DockPanel>
+  </Border>
+  <Grid Grid.Column="1" Margin="28,26,28,20">
+   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+   <Grid Margin="0,0,0,20"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+    <StackPanel>
+     <TextBlock x:Name="Heading" FontSize="32" FontWeight="SemiBold" Text="Медиатека"/>
+     <TextBlock x:Name="Subtitle" Foreground="{DynamicResource Muted}" Margin="0,4,0,0"/>
+    </StackPanel>
+    <WrapPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
+     <Button Content="＋  Импорт MIDI" ToolTip="Импортировать один или несколько файлов" Style="{StaticResource Primary}" Click="ImportFiles"/>
+     <Button Content="Импорт папки" Click="ImportFolder"/>
+    </WrapPanel>
+   </Grid>
+   <Grid Grid.Row="1">
+    <ScrollViewer x:Name="Overview" Visibility="Collapsed">
+     <StackPanel>
+      <Border Background="{DynamicResource Surface}" CornerRadius="14" Padding="25" Margin="0,0,0,16">
+       <StackPanel>
+        <TextBlock Foreground="{DynamicResource Accent}" FontSize="12" Visibility="Collapsed"/>
+        <TextBlock FontSize="29" FontWeight="SemiBold" Margin="0,8" Text="Настройка инструментов"/>
+        <TextBlock Foreground="{DynamicResource Muted}" Margin="0,0,0,16"
+         Text="Импортируйте MIDI или перетащите их в окно. Назначьте композициям клавиши и примените команды в консоли Rust. В игре экипируйте инструмент и нажмите клавишу композиции."/>
+        <WrapPanel><Button Content="Открыть медиатеку" Tag="Library" Style="{StaticResource Primary}" Click="Navigate"/><Button Content="Настроить Rust" Click="Setup"/></WrapPanel>
+       </StackPanel>
+      </Border>
+      <TextBlock x:Name="OverviewCounts" FontSize="17" Margin="0,0,0,15"/>
+      <Button HorizontalAlignment="Left" Content="Открыть папку instruments" Click="OpenMidiFolder"/>
+     </StackPanel>
+    </ScrollViewer>
+    <Grid x:Name="LibraryPanel">
+     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+     <WrapPanel x:Name="PlaylistBar" Visibility="Collapsed" Margin="0,0,0,7">
+      <ComboBox x:Name="PlaylistView" Width="230" SelectionChanged="PlaylistChanged" DisplayMemberPath="Name"/>
+      <Button Content="Новый" Click="NewPlaylist"/><Button Content="Удалить плейлист" Click="DeletePlaylist"/>
+      <Button Content="↑" ToolTip="Выше в плейлисте" Click="MoveUp"/><Button Content="↓" ToolTip="Ниже в плейлисте" Click="MoveDown"/>
+     </WrapPanel>
+     <Grid Grid.Row="1" Margin="0,0,0,10">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <TextBox x:Name="Search" TextChanged="SearchChanged" ToolTip="Поиск по названию или исходному пути" AutomationProperties.Name="Поиск MIDI" Height="34"/>
+      <TextBlock x:Name="SearchHint" Text="Поиск по медиатеке…" Foreground="{DynamicResource Muted}" Margin="10,7" IsHitTestVisible="False"/>
+      <ComboBox Grid.Column="1" x:Name="Sort" Margin="8,0,0,0" Width="150" SelectionChanged="SortChanged"/>
+     </Grid>
+     <Border Grid.Row="2" Background="{DynamicResource Surface}" CornerRadius="18" BorderBrush="{DynamicResource Line}" BorderThickness="1" ClipToBounds="True">
+      <Grid>
+       <DataGrid Margin="9,6" x:Name="Songs" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" SelectionUnit="FullRow"
+        SelectionChanged="SongChanged" Background="{DynamicResource Surface}" RowBackground="{DynamicResource Surface}" AlternatingRowBackground="{DynamicResource Surface}"
+        Foreground="{DynamicResource Ink}" BorderThickness="0" GridLinesVisibility="None" HeadersVisibility="Column"
+        CanUserAddRows="False" CanUserResizeRows="False" RowHeight="46" ColumnHeaderHeight="38">
+        <DataGrid.Resources>
+         <Style TargetType="{x:Type DataGridColumnHeader}"><Setter Property="Background" Value="{DynamicResource Surface}"/><Setter Property="Foreground" Value="{DynamicResource Muted}"/><Setter Property="Padding" Value="9,0"/></Style>
+         <Style TargetType="DataGridCell"><Setter Property="Padding" Value="8,0"/><Setter Property="BorderThickness" Value="0"/>
+          <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="DataGridCell"><Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}"><ContentPresenter VerticalAlignment="Center"/></Border></ControlTemplate></Setter.Value></Setter>
+          <Style.Triggers><Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="{DynamicResource Selection}"/><Setter Property="Foreground" Value="{DynamicResource Ink}"/></Trigger></Style.Triggers>
+         </Style>
+        </DataGrid.Resources>
+        <DataGrid.Columns>
+         <DataGridTemplateColumn Header="Композиция" SortMemberPath="Title" Width="*" MinWidth="170"><DataGridTemplateColumn.CellTemplate><DataTemplate><DockPanel><Border DockPanel.Dock="Left" CornerRadius="12" Background="{DynamicResource ControlSurface}" Width="32" Height="32" Margin="0,0,12,0"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEC4F;" Foreground="{DynamicResource Muted}" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" FontWeight="SemiBold"/></DockPanel></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+         <DataGridTextColumn Header="Время" Binding="{Binding Time}" Width="85"/>
+         <DataGridTextColumn Header="Дорожки" Binding="{Binding Tracks}" Width="84"/>
+         <DataGridTemplateColumn Header="Клавиши" SortMemberPath="Keys" Width="106"><DataGridTemplateColumn.CellTemplate><DataTemplate><Border x:Name="KeyCap" HorizontalAlignment="Left" Background="{DynamicResource ControlSurface}" BorderBrush="{DynamicResource Line}" BorderThickness="1" CornerRadius="12" Padding="8,2"><TextBlock Text="{Binding Keys}" FontSize="12" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/></Border><DataTemplate.Triggers><DataTrigger Binding="{Binding Keys}" Value=""><Setter TargetName="KeyCap" Property="Visibility" Value="Collapsed"/></DataTrigger></DataTemplate.Triggers></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+         <DataGridTextColumn Header="★" Binding="{Binding Star}" Width="45"/>
+        </DataGrid.Columns>
+       </DataGrid>
+       <StackPanel x:Name="Empty" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Border Width="80" Height="80" CornerRadius="20" Background="{DynamicResource Selection}" HorizontalAlignment="Center" Margin="0,0,0,14">
+         <TextBlock Text="&#xEC4F;" FontFamily="Segoe MDL2 Assets" FontSize="34" Foreground="{DynamicResource Accent}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+        <TextBlock x:Name="EmptyTitle" FontSize="21" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+        <Button Content="Добавить MIDI" Click="ImportFiles" HorizontalAlignment="Center" Margin="0,14,0,0"/>
+       </StackPanel>
+      </Grid>
+     </Border>
+     <WrapPanel Grid.Row="3" Margin="0,10,0,0">
+      <Button Content="★ Избранное" Click="Favorite"/><Button Content="Переименовать" Click="Rename"/>
+      <Button Content="В плейлист" Click="AddToPlaylist"/><Button x:Name="RemoveFromListButton" Content="Убрать из плейлиста" Click="RemoveFromPlaylist"/>
+      <Button Content="Сведения" Click="Metadata"/><Button Content="Удалить" Click="Remove"/>
+     </WrapPanel>
+    </Grid>
+    <ScrollViewer x:Name="Bindings" Visibility="Collapsed">
+     <StackPanel>
+      <TextBlock Text="Композиции и клавиши" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,11"/>
+      <WrapPanel>
+       <ComboBox x:Name="BindSong" Width="265" DisplayMemberPath="Title" AutomationProperties.Name="Композиция"/>
+       <ComboBox x:Name="BindKey" Width="82" AutomationProperties.Name="Клавиша"/>
+       <Button Content="Назначить" Style="{StaticResource Primary}" Click="Assign"/>
+       <Button Content="Убрать назначение" Click="RemoveBind"/>
+      </WrapPanel>
+      <ListBox x:Name="BindingList" Height="147" Background="{DynamicResource Surface}" Foreground="{DynamicResource Ink}" BorderBrush="{DynamicResource Line}" Margin="0,7,0,12" DisplayMemberPath="Label" SelectionChanged="BindingSelected"/>
+      <WrapPanel>
+       <TextBlock Text="Сброс ПКМ" VerticalAlignment="Center" Margin="0,0,8,5"/>
+       <ComboBox x:Name="ResetKey" Width="85" AutomationProperties.Name="Клавиша сброса"/>
+       <TextBlock Text="Цикл вперёд" VerticalAlignment="Center" Margin="12,0,8,5"/>
+       <ComboBox x:Name="CycleKey" Width="85" AutomationProperties.Name="Клавиша цикла"/>
+       <ComboBox x:Name="CyclePlaylist" Width="175" DisplayMemberPath="Name" AutomationProperties.Name="Плейлист цикла"/>
+       <Button Content="Сохранить" Click="SaveSpecial"/>
+      </WrapPanel>
+      <TextBlock Foreground="{DynamicResource Muted}" Margin="0,5,0,13" Text="Цикл вперёд доступен как экспериментальная привязка. В мастере можно сформировать набор без неё."/>
+      <WrapPanel>
+       <Button Content="Мастер настройки" Style="{StaticResource Primary}" Click="Setup"/>
+       <Button Content="Восстановить привязки" Click="Restore"/>
+      </WrapPanel>
+     </StackPanel>
+    </ScrollViewer>
+    <ScrollViewer x:Name="Settings" Visibility="Collapsed">
+     <StackPanel>
+      <TextBlock Text="Папка установки Rust" FontWeight="SemiBold" Margin="0,0,0,6"/>
+      <DockPanel Margin="0,0,0,10">
+       <WrapPanel DockPanel.Dock="Right" Margin="8,0,0,0"><Button Content="Выбрать" Click="PickRust"/><Button Content="Найти" Click="DetectRust"/></WrapPanel>
+       <TextBox x:Name="RustPath" VerticalAlignment="Top"/>
+      </DockPanel>
+      <TextBlock Text="Папка копий MIDI" FontWeight="SemiBold" Margin="0,0,0,6"/>
+      <DockPanel Margin="0,0,0,10">
+       <Button DockPanel.Dock="Right" Margin="8,0,7,5" Content="Выбрать" Click="PickLibrary"/>
+       <TextBox x:Name="LibraryPath" IsReadOnly="True" VerticalAlignment="Top"/>
+      </DockPanel>
+      <CheckBox x:Name="AutoDetect" Content="Искать Rust при запуске"/>
+      <CheckBox x:Name="Recursive" Content="Импортировать MIDI из вложенных папок"/>
+      <CheckBox x:Name="UseTray" Content="Сворачивать окно в трей"/>
+      <CheckBox x:Name="StartInTray" Content="Запускать приложение в трее"/>
+      <CheckBox x:Name="StartWindows" Content="Запускать вместе с Windows"/>
+      <WrapPanel Margin="0,2,0,8"><TextBlock Text="Цвет акцента" VerticalAlignment="Center" Margin="0,0,10,4"/><ComboBox x:Name="Theme" Width="145"/></WrapPanel>
+      <Button Content="Сохранить настройки" HorizontalAlignment="Left" Style="{StaticResource Primary}" Click="SaveSettings"/>
+     </StackPanel>
+    </ScrollViewer>
+   </Grid>
+   <TextBlock Grid.Row="2" x:Name="Status" Foreground="{DynamicResource Muted}" Margin="1,8,0,9" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+   <Border Grid.Row="3" Background="{DynamicResource Surface}" CornerRadius="18" BorderThickness="1" BorderBrush="{DynamicResource Line}" Padding="17,12"><Border.Effect><DropShadowEffect Color="#181719" ShadowDepth="2" BlurRadius="10" Opacity=".09"/></Border.Effect>
+    <Grid>
+     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="205"/></Grid.ColumnDefinitions>
+     <StackPanel Margin="0,0,10,0">
+      <TextBlock x:Name="SelectedTitle" FontSize="17" FontWeight="SemiBold" Text="Выберите композицию" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+      <TextBlock Foreground="{DynamicResource Muted}" FontSize="12" Text="Локальное прослушивание" Margin="0,2,0,6"/>
+      <WrapPanel>
+       <Button Content="◀" ToolTip="Предыдущая композиция в приложении" Click="Previous"/>
+       <Button x:Name="PlayButton" Style="{StaticResource Primary}" Content="Играть" Click="PlayPreview"/>
+       <Button Content="■" ToolTip="Остановить" Click="StopPreview"/>
+       <Button Content="▶" ToolTip="Следующая композиция в приложении" Click="Next"/>
+       <Button Content="Команда для ПКМ" ToolTip="Сформировать экспериментальную команду выбора для консоли Rust" Click="SetRmb"/>
+      </WrapPanel>
+     </StackPanel>
+     <StackPanel Grid.Column="1" VerticalAlignment="Center">
+      <ProgressBar x:Name="PreviewProgress" Height="5" Foreground="{DynamicResource Accent}" Background="{DynamicResource Line}" BorderThickness="0" Maximum="1"/>
+      <TextBlock x:Name="PreviewTime" Text="0:00 / 0:00" FontSize="12" Margin="0,5,0,2"/>
+      <DockPanel><TextBlock DockPanel.Dock="Left" Text="Громкость" Foreground="{DynamicResource Muted}" FontSize="12" Margin="0,2,7,0"/>
+       <Slider x:Name="Volume" Maximum="100" Value="75" ValueChanged="VolumeChanged" AutomationProperties.Name="Громкость MIDI"/>
+      </DockPanel>
+     </StackPanel>
+    </Grid>
+   </Border>
+  </Grid>
+ </Grid>
+</Window>
+

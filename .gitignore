@@ -1,0 +1,12 @@
+**/bin/
+**/obj/
+**/TestResults/
+.vs/
+.idea/
+*.user
+*.suo
+*.exe
+*.pdb
+release/
+publish/
+outputs/

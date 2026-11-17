@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="RustMidiManager.Tests/RustMidiManager.Tests.csproj" />
+  <Project Path="RustMidiManager/RustMidiManager.csproj" />
+</Solution>
