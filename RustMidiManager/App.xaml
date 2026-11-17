@@ -1,5 +1,5 @@
 <Application x:Class="RustMidiManager.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
- xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" ThemeMode="Dark"><Application.Resources><CornerRadius x:Key="ControlCornerRadius">12</CornerRadius><CornerRadius x:Key="OverlayCornerRadius">16</CornerRadius>
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" ThemeMode="Dark"><Application.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="Brand.xaml"/></ResourceDictionary.MergedDictionaries><CornerRadius x:Key="ControlCornerRadius">12</CornerRadius><CornerRadius x:Key="OverlayCornerRadius">16</CornerRadius>
   <Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/></Style>
   <Style TargetType="Button">
    <Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Background" Value="{DynamicResource ControlSurface}"/>
@@ -36,6 +36,73 @@
     <ControlTemplate.Triggers><Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource Accent}"/></Trigger></ControlTemplate.Triggers>
    </ControlTemplate></Setter.Value></Setter><Setter Property="CaretBrush" Value="{DynamicResource Ink}"/>
   </Style>
-  <Style TargetType="ComboBox"><Setter Property="Padding" Value="7,5"/><Setter Property="Margin" Value="0,0,7,5"/></Style>
+  <Style TargetType="ComboBoxItem">
+   <Setter Property="Foreground" Value="{DynamicResource Ink}"/>
+   <Setter Property="Background" Value="Transparent"/>
+   <Setter Property="Padding" Value="9,7"/>
+   <Setter Property="Template">
+    <Setter.Value>
+     <ControlTemplate TargetType="ComboBoxItem">
+      <Border x:Name="ItemSurface" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" CornerRadius="8">
+       <ContentPresenter/>
+      </Border>
+      <ControlTemplate.Triggers>
+       <Trigger Property="IsSelected" Value="True"><Setter TargetName="ItemSurface" Property="Background" Value="{DynamicResource ControlSurface}"/></Trigger>
+       <Trigger Property="IsHighlighted" Value="True"><Setter TargetName="ItemSurface" Property="Background" Value="{DynamicResource Selection}"/></Trigger>
+       <Trigger Property="IsEnabled" Value="False"><Setter TargetName="ItemSurface" Property="Opacity" Value=".5"/></Trigger>
+      </ControlTemplate.Triggers>
+     </ControlTemplate>
+    </Setter.Value>
+   </Setter>
+  </Style>
+  <Style TargetType="ComboBox">
+   <Setter Property="Foreground" Value="{DynamicResource Ink}"/>
+   <Setter Property="Background" Value="{DynamicResource Surface}"/>
+   <Setter Property="BorderBrush" Value="{DynamicResource Line}"/>
+   <Setter Property="Padding" Value="9,5"/>
+   <Setter Property="Margin" Value="0,0,7,5"/>
+   <Setter Property="MinHeight" Value="34"/>
+   <Setter Property="Template">
+    <Setter.Value>
+     <ControlTemplate TargetType="ComboBox">
+      <Grid>
+       <ToggleButton x:Name="DropToggle" Focusable="False" ClickMode="Press"
+                     IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+        <ToggleButton.Template>
+         <ControlTemplate TargetType="ToggleButton">
+          <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                  BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                  BorderThickness="1" CornerRadius="12">
+           <Path Data="M0,0 L4,4 8,0" StrokeThickness="1.4" Stroke="{DynamicResource Muted}"
+                 HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,11,0"/>
+          </Border>
+         </ControlTemplate>
+        </ToggleButton.Template>
+       </ToggleButton>
+       <ContentPresenter Margin="10,0,27,0" VerticalAlignment="Center" IsHitTestVisible="False"
+                         Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                         ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"/>
+       <Popup x:Name="PART_Popup" AllowsTransparency="True" Focusable="False" Placement="Bottom"
+              IsOpen="{TemplateBinding IsDropDownOpen}" PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}">
+        <Border Background="{DynamicResource Surface}" BorderBrush="{DynamicResource Line}" BorderThickness="1"
+                CornerRadius="12" Margin="0,4,0,0" Padding="4"
+                MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
+                MaxHeight="{TemplateBinding MaxDropDownHeight}">
+         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+          <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/>
+         </ScrollViewer>
+        </Border>
+       </Popup>
+      </Grid>
+      <ControlTemplate.Triggers>
+       <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource Accent}"/></Trigger>
+       <Trigger Property="IsMouseOver" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource Accent}"/></Trigger>
+       <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value=".5"/></Trigger>
+      </ControlTemplate.Triggers>
+     </ControlTemplate>
+    </Setter.Value>
+   </Setter>
+  </Style>
   <Style TargetType="CheckBox"><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Margin" Value="0,5,0,10"/></Style>
-</Application.Resources></Application>
+</ResourceDictionary></Application.Resources></Application>
+

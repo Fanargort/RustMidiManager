@@ -47,7 +47,7 @@ public partial class MainWindow : Window
         menu.Items.Add("Следующая композиция", null, (_, _) => Step(1));
         menu.Items.Add("Открыть папку instruments", null, (_, _) => OpenMidiFolder(this, new RoutedEventArgs()));
         menu.Items.Add("Выход", null, (_, _) => { exiting = true; Close(); });
-        tray = new Forms.NotifyIcon { Icon = System.Drawing.SystemIcons.Application, Text = "Rust MIDI Manager", ContextMenuStrip = menu };
+        tray = new Forms.NotifyIcon { Icon = new System.Drawing.Icon(Application.GetResourceStream(new Uri("Brand.ico", UriKind.Relative)).Stream, 32, 32), Text = "Rust MIDI Manager", ContextMenuStrip = menu };
         tray.DoubleClick += (_, _) => ShowWindow();
         preview.Changed += UpdatePreview;
         volumeSave.Tick += (_, _) => { volumeSave.Stop(); library.Save(); };
@@ -477,3 +477,4 @@ public partial class MainWindow : Window
         Report("Команда выбора подготовлена. Активный MIDI определяется в игре.");
     }
 }
+

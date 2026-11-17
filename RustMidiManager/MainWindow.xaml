@@ -1,6 +1,6 @@
 <Window x:Class="RustMidiManager.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
- Title="Rust MIDI Manager" Width="1200" Height="792" MinWidth="940" MinHeight="680"
+ Title="Rust MIDI Manager" Icon="Brand.ico" Width="1200" Height="792" MinWidth="940" MinHeight="680"
  Background="{DynamicResource CanvasBrush}" Foreground="{DynamicResource Ink}" FontFamily="Segoe UI Variable Text, Segoe UI" FontSize="14"
  AllowDrop="True" Drop="OnDrop" StateChanged="WindowStateChanged" Closing="WindowClosing">
 
@@ -10,7 +10,7 @@
    <DockPanel>
     <StackPanel DockPanel.Dock="Top">
      <StackPanel Orientation="Horizontal" Margin="7,0,0,30">
-      <Border Width="36" Height="36" Background="{DynamicResource Accent}" CornerRadius="12"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEC4F;" FontSize="19" Foreground="{DynamicResource AccentInk}" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+      <Image Width="48" Height="48" Source="{StaticResource RustMidiLogo}" AutomationProperties.Name="Логотип Rust MIDI"/>
       <TextBlock Text="Rust MIDI" FontSize="22" FontWeight="SemiBold" VerticalAlignment="Center" Margin="10,0,0,0"/>
      </StackPanel>
      <Button x:Name="OverviewNav" Style="{StaticResource Nav}" Tag="Overview" Click="Navigate"><StackPanel Orientation="Horizontal"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE80F;" VerticalAlignment="Center" Margin="0,0,12,0"/><TextBlock Text="Обзор"/></StackPanel></Button>

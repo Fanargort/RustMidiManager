@@ -2,10 +2,13 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
-    <UseWPF>true</UseWPF>
+    <UseWPF>true</UseWPF><ApplicationIcon>Brand.ico</ApplicationIcon>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>RustMidiManager</AssemblyName>
+    <AssemblyName>RustMidiManager</AssemblyName><Version>1.0.1</Version>
   </PropertyGroup>
-</Project>
+  <ItemGroup><Resource Include="Brand.ico"/><Resource Include="Brand.png"/></ItemGroup></Project>
+
+
+
