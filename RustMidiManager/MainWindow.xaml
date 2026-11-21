@@ -38,6 +38,7 @@
     <WrapPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
      <Button Content="＋  Импорт MIDI" ToolTip="Импортировать один или несколько файлов" Style="{StaticResource Primary}" Click="ImportFiles"/>
      <Button Content="Импорт папки" Click="ImportFolder"/>
+     <Button Content="MP3 → MIDI" Click="ConvertAudio" ToolTip="Выделить одну мелодическую линию из аудио"/>
     </WrapPanel>
    </Grid>
    <Grid Grid.Row="1">

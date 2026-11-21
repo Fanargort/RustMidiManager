@@ -35,6 +35,21 @@ internal static class Program
 
     static void Run(string root)
     {
+        var tone = new float[11025];
+        for (int i = 0; i < tone.Length; i++)
+            tone[i] = (float)(.5 * Math.Sin(2 * Math.PI * 440 * i / 11025));
+        var melody = MelodyConverter.Analyze(tone, 48, System.Threading.CancellationToken.None);
+        Check(melody.Count > 0 && melody.All(note => note.Pitch == 69), "melody recognizes A4 without simultaneous notes");
+        Check(MidiFile.Read(MelodyConverter.Encode(melody)).Messages.Count >= 2, "converted melody produces valid MIDI");
+        string wavePath = Path.Combine(root, "melody.wav");
+        using (var wave = new NAudio.Wave.WaveFileWriter(wavePath, NAudio.Wave.WaveFormat.CreateIeeeFloatWaveFormat(11025, 1)))
+            wave.WriteSamples(tone, 0, tone.Length);
+        string mp3Path = Path.Combine(root, "melody.mp3");
+        using (var waveInput = new NAudio.Wave.AudioFileReader(wavePath))
+            NAudio.Wave.MediaFoundationEncoder.EncodeToMp3(waveInput, mp3Path);
+        var converted = MelodyConverter.Convert(mp3Path, 48, System.Threading.CancellationToken.None, new Progress<int>());
+        Check(MidiFile.Read(converted).Messages.Any(message => (message.Data & 0xFF) == 0x90 && ((message.Data >> 8) & 127) == 69), "MP3 decode and melody conversion end to end");
+        Check(Throws<InvalidDataException>(() => MelodyConverter.Analyze(new float[11025], 48, System.Threading.CancellationToken.None)), "silence produces actionable conversion error");
         string steam = Path.Combine(root, "Steam");
         string secondary = Path.Combine(root, "Другой диск");
         string rust = Path.Combine(secondary, "steamapps", "common", "Custom Rust");
